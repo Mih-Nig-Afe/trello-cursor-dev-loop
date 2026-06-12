@@ -9,13 +9,17 @@ Client methods in `lib/trelloClient.js`:
 | Method | MCP tool |
 |--------|----------|
 | `getMyCards()` | `get_my_cards` |
-| `getCard(cardId)` | `get_card` |
+| `getCardFull(cardId)` | `get_card` |
 | `getCardComments(cardId)` | `get_card_comments` |
 | `addComment(cardId, text)` | `add_comment` |
 | `moveCard(cardId, listId)` | `move_card` |
 | `attachUrl(cardId, url)` | `attach_commit` |
 
 Plus board helpers: `get_boards`, `get_board_lists`, `get_board_cards`, `mark_in_progress`, `mark_done`.
+
+### `getCardFull` pulls everything
+
+One API round-trip fetches the card, then in parallel: all comments, attachments, activity, list, board, and custom field definitions. Returned shape includes description, checklists, labels, members, stickers, dates, badges, and full comment/attachment history.
 
 ## Run locally
 

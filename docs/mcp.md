@@ -26,9 +26,9 @@ trello-mcp-server/
 
 | Tool | Maps to | Description |
 |------|---------|-------------|
-| `get_my_cards` | `getMyCards()` | Cards assigned to you |
-| `get_card` | `getCard()` | Full card + comments + checklists |
-| `get_card_comments` | `getCardComments()` | Comment thread |
+| `get_my_cards` | `getMyCards()` | Assigned cards with description, labels, checklists, badges |
+| `get_card` | `getCardFull()` | **Complete extraction** — see below |
+| `get_card_comments` | `getCardComments()` | All comments (up to 1000) |
 | `add_comment` | `addComment()` | Post comment (gated by hook) |
 | `move_card` | `moveCard()` | Move to any list |
 | `attach_commit` | `attachCommit()` | Attach commit/PR URL |
@@ -36,6 +36,23 @@ trello-mcp-server/
 | `get_board_lists` | — | Resolve list IDs |
 | `mark_in_progress` | — | Shortcut → In Progress list |
 | `mark_done` | — | Shortcut → Done list |
+
+## `get_card` — complete extraction
+
+A single `get_card` call returns everything the agent needs to analyze a ticket:
+
+| Category | Fields |
+|----------|--------|
+| Core | `id`, `idShort`, `name`, `desc`, `descData`, URLs |
+| Context | `board` (name, url), `list` (name, pos) |
+| People | `members`, `membersVoted` |
+| Work items | `checklists` (all items + states), `labels`, `customFields` |
+| Discussion | `comments` (full thread, up to 1000) |
+| Files | `attachments` (name, url, mimeType, size) |
+| History | `activity` (updates, members, attachments, checklist changes) |
+| Meta | `dates`, `badges`, `cover`, `stickers`, `status`, `location` |
+
+`analyze_ticket` and `implement_ticket` prompts use this full payload automatically.
 
 ## Prompts
 

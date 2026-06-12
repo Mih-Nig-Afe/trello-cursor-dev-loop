@@ -93,7 +93,9 @@ Details: [docs/safety-model.md](./docs/safety-model.md)
 
 ## MCP tools
 
-`get_my_cards` · `get_card` · `get_card_comments` · `add_comment` · `move_card` · `attach_commit` · `get_board_cards` · `get_board_lists` · `mark_in_progress` · `mark_done`
+`get_my_cards` · `get_card` (full extraction) · `get_card_comments` · `add_comment` · `move_card` · `attach_commit` · `get_board_cards` · `get_board_lists` · `mark_in_progress` · `mark_done`
+
+`get_card` returns description, all comments, attachments, checklists, custom fields, stickers, activity, and list/board context in one call.
 
 ## Use in another project
 

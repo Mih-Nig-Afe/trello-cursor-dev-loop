@@ -14,7 +14,7 @@ proceed
 
 ## What the agent does
 
-1. Re-read `get_card` for latest comments.
+1. Re-read `get_card` (full extraction) for latest comments and card updates.
 2. Apply minimal, focused code changes.
 3. Run relevant tests if appropriate.
 4. Summarize changes.
