@@ -1,0 +1,29 @@
+---
+description: Human-in-the-loop AI dev agent safety and Trello workflow
+alwaysApply: true
+---
+
+# AI Dev Agent — Human Approval Required
+
+This project uses a Trello-driven dev loop. The user is always the controller.
+
+## Never without explicit user approval
+
+- `git commit`
+- `git push` (especially to `main` / `master`)
+- Trello `move_card`, `mark_in_progress`, `mark_done`
+- Trello `add_comment` (except when user says "update trello")
+
+## Workflow phases
+
+1. **Analyze** — read ticket, propose plan, no code edits
+2. **Implement** — only after user approves the plan
+3. **Review** — user says fix / improve / commit / update trello
+4. **Commit** — only when user says commit
+5. **Sync** — only when user says update trello
+
+## Ticket commands
+
+Recognize: `analyze ticket`, `implement ticket`, `prepare commit`, `update trello`, `mark in progress`, `mark done`.
+
+Use the `trello` MCP server and the `trello-dev-loop` skill when handling these.
