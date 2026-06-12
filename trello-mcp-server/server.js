@@ -22,37 +22,27 @@ async function main() {
 
   server.tool(
     "get_my_cards",
-    "List Trello cards assigned to the authenticated member.",
+    "List Trello cards assigned to the authenticated member (includes description, labels, checklists, badges).",
     {},
     async () => {
       const cards = await trello.getMyCards();
-      const summary = cards.map((card) => ({
-        id: card.id,
-        name: card.name,
-        listId: card.idList,
-        boardId: card.idBoard,
-        url: card.shortUrl,
-        labels: (card.labels || []).map((l) => l.name || l.color),
-        due: card.due,
-        lastActivity: card.dateLastActivity,
-      }));
-      return textResult(summary);
+      return textResult(cards.map((card) => trello.formatCardBrief(card)));
     }
   );
 
   server.tool(
     "get_card",
-    "Get full Trello card details including description, checklists, and recent comments.",
+    "Get complete Trello card extraction: description, all comments, attachments, checklists, custom fields, stickers, activity, list/board context.",
     { cardId: z.string().describe("Trello card ID or short link ID") },
     async ({ cardId }) => {
-      const card = await trello.getCard(cardId);
-      return textResult(trello.formatCardSummary(card));
+      const full = await trello.getCardFull(cardId);
+      return textResult(full);
     }
   );
 
   server.tool(
     "get_card_comments",
-    "Get all comments on a Trello card.",
+    "Get all comments on a Trello card (up to 1000).",
     { cardId: z.string().describe("Trello card ID") },
     async ({ cardId }) => {
       const comments = await trello.getCardComments(cardId);
@@ -199,8 +189,7 @@ async function main() {
     "Structured ticket analysis — read-only planning mode, no code changes.",
     { cardId: z.string().describe("Trello card ID to analyze") },
     async ({ cardId }) => {
-      const card = await trello.getCard(cardId);
-      const summary = trello.formatCardSummary(card);
+      const full = await trello.getCardFull(cardId);
       return {
         messages: [
           {
@@ -209,8 +198,8 @@ async function main() {
               type: "text",
               text: `Analyze Trello ticket ${cardId} fully.
 
-TICKET DATA:
-${JSON.stringify(summary, null, 2)}
+TICKET DATA (complete extraction — description, comments, attachments, checklists, custom fields, activity):
+${JSON.stringify(full, null, 2)}
 
 Produce a structured plan ONLY — do NOT edit code yet.
 
@@ -238,8 +227,7 @@ Wait for explicit user approval before implementing.`,
       plan: z.string().optional().describe("Approved implementation plan"),
     },
     async ({ cardId, plan }) => {
-      const card = await trello.getCard(cardId);
-      const summary = trello.formatCardSummary(card);
+      const full = await trello.getCardFull(cardId);
       return {
         messages: [
           {
@@ -248,8 +236,8 @@ Wait for explicit user approval before implementing.`,
               type: "text",
               text: `Implement Trello ticket ${cardId} based on the approved plan.
 
-TICKET:
-${JSON.stringify(summary, null, 2)}
+TICKET (complete extraction):
+${JSON.stringify(full, null, 2)}
 
 APPROVED PLAN:
 ${plan || "(use the plan from the prior analyze step)"}

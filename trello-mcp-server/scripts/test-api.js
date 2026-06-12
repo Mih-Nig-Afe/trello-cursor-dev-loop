@@ -20,6 +20,32 @@ async function main() {
   for (const board of boards.slice(0, 5)) {
     console.log(`  - [${board.id}] ${board.name}`);
   }
+
+  const testCardId = process.env.TRELLO_TEST_CARD_ID;
+  const boardId = config.boardId || boards[0]?.id;
+
+  let cardId = testCardId;
+  if (!cardId && boardId) {
+    const boardCards = await trello.getBoardCards(boardId);
+    cardId = boardCards[0]?.id;
+  }
+
+  if (cardId) {
+    console.log(`\nFull extraction test for card: ${cardId}`);
+    const full = await trello.getCardFull(cardId);
+    console.log("  Fields extracted:");
+    console.log(`    desc: ${full.desc ? `${full.desc.slice(0, 60)}...` : "(empty)"}`);
+    console.log(`    comments: ${full.comments.length}`);
+    console.log(`    attachments: ${full.attachments.length}`);
+    console.log(`    checklists: ${full.checklists.length}`);
+    console.log(`    customFields: ${full.customFields.length}`);
+    console.log(`    stickers: ${full.stickers.length}`);
+    console.log(`    activity: ${full.activity.length}`);
+    console.log(`    list: ${full.list?.name || full.list?.id}`);
+    console.log(`    board: ${full.board?.name || full.board?.id}`);
+  } else {
+    console.log("\nNo card available for full extraction test.");
+  }
 }
 
 main().catch((err) => {
