@@ -44,7 +44,13 @@ Edit `.cursor/mcp.json` — the path is already relative to this repo.
 
 **Global** (Trello in every project):
 
-Add to `~/.cursor/mcp.json`:
+```bash
+./bin/sync-global-cursor.sh
+```
+
+This updates `~/.cursor/mcp.json` (trello server + `cwd` for `.env`) and copies the latest skill to `~/.cursor/skills/trello-dev-loop/`.
+
+Or manually add to `~/.cursor/mcp.json`:
 
 ```json
 {
@@ -52,13 +58,14 @@ Add to `~/.cursor/mcp.json`:
     "trello": {
       "command": "bash",
       "args": ["/absolute/path/to/trello-cursor-dev-loop/trello-mcp-server/bin/start-mcp.sh"],
+      "cwd": "/absolute/path/to/trello-cursor-dev-loop",
       "env": {}
     }
   }
 }
 ```
 
-Use your real absolute path. Keep `.env` in the repo root (credentials load from there).
+Keep `.env` in the repo root (credentials load from there).
 
 ## 5. Optional list shortcuts
 
