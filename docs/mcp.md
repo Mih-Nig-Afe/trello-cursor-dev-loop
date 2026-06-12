@@ -19,8 +19,11 @@ trello-mcp-server/
 ├── lib/
 │   ├── trelloClient.js
 │   └── env.js         # loads .env from repo root
-└── bin/start-mcp.sh   # Node discovery + launcher
+├── bin/start-mcp.sh   # Node discovery + launcher
+└── scripts/test-api.js
 ```
+
+SDK: `@modelcontextprotocol/sdk` ^1.29.0 (stable v1).
 
 ## Tools
 
@@ -30,16 +33,18 @@ trello-mcp-server/
 | `get_card` | `getCardFull()` | **Complete extraction** — see below |
 | `get_card_comments` | `getCardComments()` | All comments (up to 1000) |
 | `add_comment` | `addComment()` | Post comment (gated by hook) |
+| `update_card` | `updateCard()` | Update name, desc, due |
 | `move_card` | `moveCard()` | Move to any list |
-| `attach_commit` | `attachCommit()` | Attach commit/PR URL |
-| `get_board_cards` | — | All cards on a board |
-| `get_board_lists` | — | Resolve list IDs |
-| `mark_in_progress` | — | Shortcut → In Progress list |
-| `mark_done` | — | Shortcut → Done list |
+| `attach_commit` | `attachUrl()` | Attach commit/PR URL |
+| `get_boards` | `getBoards()` | Open boards |
+| `get_board_cards` | `getBoardCards()` | All cards on a board (with description) |
+| `get_board_lists` | `getBoardLists()` | Resolve list IDs |
+| `mark_in_progress` | shortcut | Move to `TRELLO_LIST_IN_PROGRESS` |
+| `mark_done` | shortcut | Move to `TRELLO_LIST_DONE` |
 
 ## `get_card` — complete extraction
 
-A single `get_card` call returns everything the agent needs to analyze a ticket:
+A single `get_card` call fetches the card, then in parallel loads comments, attachments, activity, list, board, and custom field definitions.
 
 | Category | Fields |
 |----------|--------|
@@ -64,13 +69,31 @@ Built-in MCP prompts shape agent behavior:
 
 ## Credentials
 
-`lib/env.js` reads `TRELLO_API_KEY` and `TRELLO_TOKEN` from the **repo root** `.env`. The MCP process inherits this via the launcher working directory.
+`lib/env.js` reads from the **repo root** `.env`:
+
+- `TRELLO_API_KEY` (required)
+- `TRELLO_TOKEN` (required)
+- `TRELLO_BOARD_ID` (optional)
+- `TRELLO_LIST_IN_PROGRESS` (optional)
+- `TRELLO_LIST_REVIEW` (optional)
+- `TRELLO_LIST_DONE` (optional)
+
+Global MCP config must set `cwd` to the repo root so `.env` is found. Use `./bin/sync-global-cursor.sh`.
 
 ## Debugging
 
+From repo root:
+
 ```bash
-npm run test-api          # direct API test (no Cursor)
-npm start                 # runs server.js (stdio — for manual debug)
+npm run test-api          # API + full extraction smoke test
+npm start                 # runs MCP server on stdio
 ```
 
-In Cursor: Settings → MCP → refresh `trello` if tools don't appear.
+From `trello-mcp-server/`:
+
+```bash
+npm run test-api
+npm start
+```
+
+In Cursor: Settings → MCP → **Refresh** `trello` after server code changes.

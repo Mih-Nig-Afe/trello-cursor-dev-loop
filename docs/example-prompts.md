@@ -83,6 +83,8 @@ update trello ticket <card-id> and mark done
 
 ## Tips
 
-- Paste the card ID from Trello (or from `get_my_cards` output).
+- Paste the card ID from Trello (or from `get_my_cards` / `get_board_cards` output).
+- `analyze ticket` uses `get_card` full extraction — description, comments, attachments, checklists, and activity in one call.
 - Say **proceed** only when the plan looks right.
 - Say **update trello** only after you've verified the code and commit.
+- After `git pull` in this repo, run `./bin/sync-global-cursor.sh` and Refresh MCP in Cursor.

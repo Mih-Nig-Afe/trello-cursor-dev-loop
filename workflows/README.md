@@ -6,7 +6,7 @@ Natural-language commands that drive the dev loop. Say these in Cursor chat.
 
 ```
 1. analyze my assigned tasks          → pull your Trello queue
-2. analyze ticket <cardId>            → read card + comments, output PLAN
+2. analyze ticket <cardId>            → full card extraction → output PLAN
 3. proceed / implement ticket <id>    → code changes (after you approve plan)
 4. prepare commit for ticket <id>     → diff + suggested message
 5. commit this change                 → create commit (you approve)
@@ -19,7 +19,7 @@ Natural-language commands that drive the dev loop. Say these in Cursor chat.
 |---------|-------|----------------|
 | `analyze my assigned tasks` | Pull | `get_my_cards`, summarize queue |
 | `show my trello board` | Pull | `get_board_cards`, group by list |
-| `analyze ticket <id>` | Plan | Full card + plan, **no code** |
+| `analyze ticket <id>` | Plan | `get_card` full extraction + plan, **no code** |
 | `implement ticket <id>` | Build | Edit codebase per approved plan |
 | `fix issue in ticket <id>` | Fix | Targeted fix from card feedback |
 | `prepare commit for ticket <id>` | Commit prep | `git diff`, draft message |

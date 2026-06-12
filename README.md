@@ -32,19 +32,21 @@ Clone this repo, connect Trello via MCP, and run a repeatable dev loop your whol
 | [`workflows/`](./workflows/) | Command system (`analyze ticket`, `implement ticket`, …) |
 | [`examples/`](./examples/) | End-to-end session walkthroughs |
 | [`docs/`](./docs/) | Setup, MCP, safety model, example prompts |
+| [`bin/`](./bin/) | `install.sh`, `sync-global-cursor.sh` |
 | [`.cursor/`](./.cursor/) | Ready-to-use Cursor config (MCP + rules + hooks) |
 
 ## Quick start
 
 ```bash
-git clone https://github.com/Mih-Nig-Afe/trello-cursor-dev-loop.git
-cd trello-cursor-dev-loop
+git clone https://github.com/Mih-Nig-Afe/MCP-Dev-Loop-Trello-Cursor-GitHub.git
+cd MCP-Dev-Loop-Trello-Cursor-GitHub
 ./bin/install.sh
+./bin/sync-global-cursor.sh
 ```
 
 1. Edit `.env` with [Trello API credentials](https://trello.com/power-ups/admin)
-2. `npm run test-api` — verify connection
-3. Open in **Cursor** → Settings → MCP → confirm `trello` is connected
+2. `npm run test-api` — verify connection + full card extraction
+3. Cursor Settings → MCP → confirm `trello` is connected (Refresh if needed)
 4. In chat: **`analyze my assigned tasks`**
 
 Full guide: [docs/setup.md](./docs/setup.md)
@@ -54,7 +56,7 @@ Full guide: [docs/setup.md](./docs/setup.md)
 | Step | You say | Agent does |
 |------|---------|------------|
 | 1. Pull | `analyze my assigned tasks` | Lists your Trello queue |
-| 2. Plan | `analyze ticket <id>` | Reads card + comments, outputs **PLAN** (no code) |
+| 2. Plan | `analyze ticket <id>` | Full card extraction → **PLAN** (no code) |
 | 3. Approve | `proceed` | — |
 | 4. Build | `implement ticket <id>` | Edits codebase |
 | 5. Commit prep | `prepare commit for ticket <id>` | Shows diff + draft message |
@@ -93,17 +95,27 @@ Details: [docs/safety-model.md](./docs/safety-model.md)
 
 ## MCP tools
 
-`get_my_cards` · `get_card` (full extraction) · `get_card_comments` · `add_comment` · `move_card` · `attach_commit` · `get_board_cards` · `get_board_lists` · `mark_in_progress` · `mark_done`
+`get_my_cards` · `get_card` (full extraction) · `get_card_comments` · `add_comment` · `update_card` · `move_card` · `attach_commit` · `get_boards` · `get_board_cards` · `get_board_lists` · `mark_in_progress` · `mark_done`
 
 `get_card` returns description, all comments, attachments, checklists, custom fields, stickers, activity, and list/board context in one call.
 
 ## Use in another project
 
-1. Register MCP globally in `~/.cursor/mcp.json` (point at `trello-mcp-server/bin/start-mcp.sh`)
+1. `./bin/sync-global-cursor.sh` — registers MCP globally + copies skill
 2. Copy [`cursor-rules/`](./cursor-rules/) into your app's `.cursor/`
-3. Keep `.env` in this repo (or set env vars in `mcp.json`)
+3. Keep `.env` in this repo (global MCP `cwd` points here)
 
 Guide: [docs/cursor-setup.md](./docs/cursor-setup.md)
+
+## Stay up to date
+
+```bash
+git pull
+./bin/sync-global-cursor.sh
+npm run install:mcp   # if dependencies changed
+```
+
+Then Refresh MCP in Cursor Settings.
 
 ## Roadmap
 

@@ -11,19 +11,22 @@ Agent behavior for **MCP Dev Loop**. Copy into your project or use this repo as 
 
 ```bash
 # From your app repo root
-cp -R /path/to/mcp-dev-loop/cursor-rules/ai-dev-agent.mdc .cursor/rules/
-cp -R /path/to/mcp-dev-loop/cursor-rules/skills .cursor/
-cp -R /path/to/mcp-dev-loop/cursor-rules/hooks .cursor/
-cp /path/to/mcp-dev-loop/cursor-rules/hooks.json .cursor/
+cp -R /path/to/MCP-Dev-Loop-Trello-Cursor-GitHub/cursor-rules/ai-dev-agent.mdc .cursor/rules/
+cp -R /path/to/MCP-Dev-Loop-Trello-Cursor-GitHub/cursor-rules/skills .cursor/
+cp -R /path/to/MCP-Dev-Loop-Trello-Cursor-GitHub/cursor-rules/hooks .cursor/
+cp /path/to/MCP-Dev-Loop-Trello-Cursor-GitHub/cursor-rules/hooks.json .cursor/
 chmod +x .cursor/hooks/*.sh
 ```
 
-**Option C — global skill** (works in any project)
+**Option C — global MCP + skill** (works in any project)
+
+From this repo:
 
 ```bash
-mkdir -p ~/.cursor/skills/trello-dev-loop
-cp skills/trello-dev-loop/SKILL.md ~/.cursor/skills/trello-dev-loop/
+./bin/sync-global-cursor.sh
 ```
+
+Updates `~/.cursor/mcp.json` and `~/.cursor/skills/trello-dev-loop/SKILL.md`. Re-run after `git pull`.
 
 ## Contents
 
