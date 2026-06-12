@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeShellExecution": [
+      {
+        "command": ".cursor/hooks/guard-git.sh",
+        "matcher": "git\\s+(commit|push)"
+      }
+    ],
+    "beforeMCPExecution": [
+      {
+        "command": ".cursor/hooks/guard-trello.sh",
+        "matcher": "MCP: trello"
+      }
+    ]
+  }
+}

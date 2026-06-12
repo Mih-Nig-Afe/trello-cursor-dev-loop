@@ -1,68 +1,70 @@
-# Trello ↔ Cursor Dev Loop
+# MCP Dev Loop: Trello → Cursor → GitHub
 
-Human-in-the-loop AI development: Trello tickets drive analysis, implementation, commits, and board sync in Cursor.
+**Human-in-the-loop AI development** — Trello tickets drive analysis, implementation, commits, and board sync in Cursor.
 
-## What's included
+> ❌ **Not autonomous AI** — the agent suggests, you approve, the agent executes.  
+> ✅ **Human-in-the-loop** — no surprise commits, pushes, or Trello updates.
 
-| Path | Purpose |
-|------|---------|
-| `server.js` | Trello MCP server |
-| `lib/` | Trello API client + env loader |
-| `.cursor/mcp.json` | Cursor MCP registration |
-| `.cursor/skills/trello-dev-loop/` | Agent workflow skill |
-| `.cursor/rules/ai-dev-agent.mdc` | Always-on safety rules |
-| `.cursor/hooks/` | Git + Trello approval hooks |
-
-## Quick start
-
-1. Clone this repo and open it in Cursor (or symlink `.cursor/` into another project).
-2. Copy credentials:
-
-```bash
-cp .env.example .env
-# Edit .env with your Trello API key and token
-```
-
-Get credentials at [Trello Power-Ups Admin](https://trello.com/power-ups/admin).
-
-3. Install and verify:
-
-```bash
-npm install
-npm run test-api
-```
-
-4. **Global Cursor setup (recommended)** — register once in `~/.cursor/mcp.json` so Trello works in **every** project:
-
-```json
-{
-  "mcpServers": {
-    "trello": {
-      "command": "bash",
-      "args": ["/absolute/path/to/trello-cursor-dev-loop/bin/start-mcp.sh"],
-      "env": {}
-    }
-  }
-}
-```
-
-Also copy the skill to `~/.cursor/skills/trello-dev-loop/SKILL.md` (or clone this repo and copy from `.cursor/skills/`).
-
-5. **One-time:** Cursor Settings → MCP → confirm `trello` shows green/connected. Click refresh if needed. After that it starts automatically whenever you open Cursor — any workspace.
-
-Optional: set list IDs in `.env` after running the `get_board_lists` tool.
-
-Node is auto-detected via `bin/start-mcp.sh` (system Node or Cursor-bundled). No extra PATH setup required.
+Clone this repo, connect Trello via MCP, and run a repeatable dev loop your whole team can use.
 
 ## Architecture
 
 ```
-Trello Ticket → analyze → approve plan → implement → review → commit → update Trello
-                     ↑                              ↑         ↑            ↑
-                  YOU approve                   YOU review  YOU commit   YOU say so
+┌──────────────┐     ┌───────────────────┐     ┌─────────────────┐
+│   Trello     │ ──► │ Trello MCP Server │ ──► │  Cursor Agent   │
+│  (Tickets)   │     │  (this repo)      │     │ (you control)   │
+└──────────────┘     └───────────────────┘     └────────┬────────┘
+                                                        │
+                        ┌───────────────────────────────┼───────────────────────────────┐
+                        ▼                               ▼                               ▼
+                 ┌─────────────┐                ┌─────────────┐                ┌─────────────┐
+                 │  Codebase   │ ─────────────► │   GitHub    │ ─────────────► │   Trello    │
+                 │ Node/React… │    commit/PR   │ commits/PRs │  update/sync   │  comments   │
+                 └─────────────┘                └─────────────┘                └─────────────┘
 ```
 
-## Commands in Cursor
+## Repo structure
+
+| Path | Purpose |
+|------|---------|
+| [`trello-mcp-server/`](./trello-mcp-server/) | Core engine — Trello API + MCP tools |
+| [`cursor-rules/`](./cursor-rules/) | Agent rules, skill, approval hooks |
+| [`workflows/`](./workflows/) | Command system (`analyze ticket`, `implement ticket`, …) |
+| [`examples/`](./examples/) | End-to-end session walkthroughs |
+| [`docs/`](./docs/) | Setup, MCP, safety model, example prompts |
+| [`.cursor/`](./.cursor/) | Ready-to-use Cursor config (MCP + rules + hooks) |
+
+## Quick start
+
+```bash
+git clone https://github.com/Mih-Nig-Afe/trello-cursor-dev-loop.git
+cd trello-cursor-dev-loop
+./bin/install.sh
+```
+
+1. Edit `.env` with [Trello API credentials](https://trello.com/power-ups/admin)
+2. `npm run test-api` — verify connection
+3. Open in **Cursor** → Settings → MCP → confirm `trello` is connected
+4. In chat: **`analyze my assigned tasks`**
+
+Full guide: [docs/setup.md](./docs/setup.md)
+
+## Daily workflow
+
+| Step | You say | Agent does |
+|------|---------|------------|
+| 1. Pull | `analyze my assigned tasks` | Lists your Trello queue |
+| 2. Plan | `analyze ticket <id>` | Reads card + comments, outputs **PLAN** (no code) |
+| 3. Approve | `proceed` | — |
+| 4. Build | `implement ticket <id>` | Edits codebase |
+| 5. Commit prep | `prepare commit for ticket <id>` | Shows diff + draft message |
+| 6. Commit | `commit this change` | Creates commit (you approve via hook) |
+| 7. Sync | `update trello ticket <id>` | Comment + attach commit URL |
+
+Command reference: [workflows/README.md](./workflows/README.md)  
+Example sessions: [examples/](./examples/)
+
+## Commands
 
 ```
 analyze my assigned tasks
@@ -76,23 +78,39 @@ mark in progress
 mark done
 ```
 
+Slash aliases: `/analyze-ticket`, `/implement-ticket`, `/prepare-commit`, `/update-trello`
+
 ## Safety (enforced)
 
-| Action | Rule |
-|--------|------|
-| `git commit` | Hook asks approval; agent waits for "commit" |
-| `git push` | Hook asks approval |
-| push to `main` | Extra gate |
-| Trello move/comment | Hook asks unless you said "update trello" / "mark done" |
+| Action | Protection |
+|--------|------------|
+| `git commit` | Cursor hook → asks your approval |
+| `git push` | Hook → asks approval (`main`/`master` extra gate) |
+| Trello comment / move | Hook → blocked unless you said `update trello` or `mark done` |
+| Agent rules | Analyze phase = no code; commit/sync only on explicit command |
 
-## Use in another project
-
-Open this repo as your Cursor workspace when working the Trello loop, **or** copy `.cursor/` into your app repo and keep this repo cloned elsewhere with MCP pointed at `server.js` via absolute path in `mcp.json`.
+Details: [docs/safety-model.md](./docs/safety-model.md)
 
 ## MCP tools
 
-`get_my_cards`, `get_card`, `get_card_comments`, `add_comment`, `update_card`, `move_card`, `attach_commit`, `get_boards`, `get_board_lists`, `mark_in_progress`, `mark_done`
+`get_my_cards` · `get_card` · `get_card_comments` · `add_comment` · `move_card` · `attach_commit` · `get_board_cards` · `get_board_lists` · `mark_in_progress` · `mark_done`
+
+## Use in another project
+
+1. Register MCP globally in `~/.cursor/mcp.json` (point at `trello-mcp-server/bin/start-mcp.sh`)
+2. Copy [`cursor-rules/`](./cursor-rules/) into your app's `.cursor/`
+3. Keep `.env` in this repo (or set env vars in `mcp.json`)
+
+Guide: [docs/cursor-setup.md](./docs/cursor-setup.md)
+
+## Roadmap
+
+- Auto-task prioritization
+- Codebase memory layer
+- PR auto-review
+- Test runner integration before commit
+- Slack/Telegram notifications
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE)

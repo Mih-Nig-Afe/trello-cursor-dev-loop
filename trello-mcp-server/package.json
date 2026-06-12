@@ -1,0 +1,22 @@
+{
+  "name": "@mcp-dev-loop/trello-mcp-server",
+  "version": "1.0.0",
+  "description": "Trello MCP server for MCP Dev Loop — fetch cards, comments, status updates, commit attachments",
+  "type": "module",
+  "main": "server.js",
+  "bin": {
+    "trello-mcp": "./bin/start-mcp.sh"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test-api": "node scripts/test-api.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

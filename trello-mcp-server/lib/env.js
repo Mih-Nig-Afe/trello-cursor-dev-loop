@@ -35,7 +35,7 @@ function loadEnvFile(path) {
 }
 
 export function loadConfig() {
-  const repoRoot = join(__dirname, "..");
+  const repoRoot = join(__dirname, "..", "..");
   loadEnvFile(join(repoRoot, ".env"));
 
   const apiKey = process.env.TRELLO_API_KEY;

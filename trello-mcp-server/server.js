@@ -17,6 +17,7 @@ async function main() {
   const server = new McpServer({
     name: "trello",
     version: "1.0.0",
+    description: "MCP Dev Loop — Trello ticket integration for Cursor",
   });
 
   server.tool(

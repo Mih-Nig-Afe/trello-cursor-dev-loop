@@ -2,8 +2,8 @@
 # Reliable MCP launcher — finds Node (system or Cursor-bundled) and starts the server.
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-cd "$ROOT"
+SERVER_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+cd "$SERVER_ROOT"
 
 NODE=""
 if command -v node >/dev/null 2>&1; then
@@ -23,4 +23,4 @@ if [ -z "$NODE" ]; then
   exit 1
 fi
 
-exec "$NODE" "$ROOT/server.js"
+exec "$NODE" "$SERVER_ROOT/server.js"
