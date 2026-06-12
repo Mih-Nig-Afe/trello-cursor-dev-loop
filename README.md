@@ -32,8 +32,23 @@ npm install
 npm run test-api
 ```
 
-4. Open **this repo** as your Cursor workspace (File → Open Folder → `trello-cursor-dev-loop`).
-5. **One-time:** Cursor Settings → MCP → confirm `trello` shows green/connected. If not, click refresh. No manual reconnect needed after that — it loads automatically whenever you open this folder.
+4. **Global Cursor setup (recommended)** — register once in `~/.cursor/mcp.json` so Trello works in **every** project:
+
+```json
+{
+  "mcpServers": {
+    "trello": {
+      "command": "bash",
+      "args": ["/absolute/path/to/trello-cursor-dev-loop/bin/start-mcp.sh"],
+      "env": {}
+    }
+  }
+}
+```
+
+Also copy the skill to `~/.cursor/skills/trello-dev-loop/SKILL.md` (or clone this repo and copy from `.cursor/skills/`).
+
+5. **One-time:** Cursor Settings → MCP → confirm `trello` shows green/connected. Click refresh if needed. After that it starts automatically whenever you open Cursor — any workspace.
 
 Optional: set list IDs in `.env` after running the `get_board_lists` tool.
 
