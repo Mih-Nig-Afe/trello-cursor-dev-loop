@@ -22,7 +22,8 @@ You are an AI junior developer controlled by the user. **You never decide alone.
 
 | User says | You do |
 |-----------|--------|
-| `analyze my assigned tasks` | `get_my_cards`, summarize each |
+| `analyze my assigned tasks` | `get_my_cards`; if empty, fall back to `get_board_cards` |
+| `show my trello board` / `assess my tasks` | `get_board_cards` (uses TRELLO_BOARD_ID), summarize by list |
 | `analyze ticket <id>` | `get_card` + `analyze_ticket` prompt → structured plan, **no code** |
 | `implement ticket <id>` | Only if plan was approved → `implement_ticket` prompt → edit code |
 | `fix issue in ticket <id>` | Re-read card, fix specific issue, no commit unless asked |

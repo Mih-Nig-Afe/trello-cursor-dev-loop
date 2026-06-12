@@ -143,6 +143,27 @@ async function main() {
   );
 
   server.tool(
+    "get_board_cards",
+    "List all cards on a board grouped by list. Uses TRELLO_BOARD_ID from .env if boardId omitted.",
+    {
+      boardId: z
+        .string()
+        .optional()
+        .describe("Board ID (defaults to TRELLO_BOARD_ID in .env)"),
+    },
+    async ({ boardId }) => {
+      const id = boardId || config.boardId;
+      if (!id) {
+        return textResult({
+          error: "Provide boardId or set TRELLO_BOARD_ID in .env",
+        });
+      }
+      const cards = await trello.getBoardCards(id);
+      return textResult(cards);
+    }
+  );
+
+  server.tool(
     "mark_in_progress",
     "Move card to the configured In Progress list (TRELLO_LIST_IN_PROGRESS).",
     { cardId: z.string().describe("Trello card ID") },

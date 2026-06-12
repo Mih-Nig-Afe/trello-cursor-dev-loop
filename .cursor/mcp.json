@@ -1,8 +1,8 @@
 {
   "mcpServers": {
     "trello": {
-      "command": "node",
-      "args": ["server.js"],
+      "command": "bash",
+      "args": ["bin/start-mcp.sh"],
       "cwd": "${workspaceFolder}",
       "env": {}
     }

@@ -32,10 +32,12 @@ npm install
 npm run test-api
 ```
 
-4. **Restart Cursor** to load the `trello` MCP server.
-5. Optional: set list IDs in `.env` after running the `get_board_lists` tool.
+4. Open **this repo** as your Cursor workspace (File → Open Folder → `trello-cursor-dev-loop`).
+5. **One-time:** Cursor Settings → MCP → confirm `trello` shows green/connected. If not, click refresh. No manual reconnect needed after that — it loads automatically whenever you open this folder.
 
-Requires **Node.js 18+** on your PATH (or point `command` in `.cursor/mcp.json` to your node binary).
+Optional: set list IDs in `.env` after running the `get_board_lists` tool.
+
+Node is auto-detected via `bin/start-mcp.sh` (system Node or Cursor-bundled). No extra PATH setup required.
 
 ## Architecture
 
