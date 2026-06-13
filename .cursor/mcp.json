@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "trello": {
-      "command": "bash",
-      "args": ["trello-mcp-server/bin/start-mcp.sh"],
-      "env": {}
-    }
-  }
-}
